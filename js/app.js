@@ -110,14 +110,6 @@ function app(){
       {year:'2019 — 2021',role:'Frontend Developer',company:'Digital Agency · Barcelona',desc:'Desarrollo de sitios web y aplicaciones para clientes internacionales. Especializado en React, animaciones y performance web.'},
       {year:'2018 — 2019',role:'Junior Developer',company:'CodeFactory · Madrid',desc:'Primeros pasos profesionales. Mantenimiento de legacy code, desarrollo de features y aprendizaje intensivo de buenas prácticas.'},
     ],
-    blogPosts:[
-      {title:'Introducción a React Server Components',date:'15 Mar 2025',category:'Tutorial',emoji:'⚛️',excerpt:'Descubre cómo los Server Components están cambiando la forma de construir aplicaciones React.',tags:['React','Next.js','SSR']},
-      {title:'Optimizando consultas en PostgreSQL',date:'08 Mar 2025',category:'Base de Datos',emoji:'🐘',excerpt:'Técnicas avanzadas para mejorar el rendimiento de tus queries en PostgreSQL.',tags:['PostgreSQL','Performance','SQL']},
-      {title:'Mi experiencia con Docker en producción',date:'01 Mar 2025',category:'DevOps',emoji:'🐳',excerpt:'Lecciones aprendidas al implementar contenedores Docker en entornos productivos.',tags:['Docker','DevOps','CI/CD']},
-      {title:'Patrones de diseño en JavaScript moderno',date:'22 Feb 2025',category:'Arquitectura',emoji:'📘',excerpt:'Los patrones de diseño esenciales que todo desarrollador JS debería conocer.',tags:['JavaScript','Patrones','Clean Code']},
-      {title:'Construyendo APIs REST con Node.js',date:'15 Feb 2025',category:'Backend',emoji:'🟢',excerpt:'Guía completa para crear APIs robustas y escalables con Node.js y Express.',tags:['Node.js','Express','API']},
-      {title:'Tailwind CSS: Trucos y consejos',date:'08 Feb 2025',category:'Frontend',emoji:'🎨',excerpt:'Aprende a aprovechar al máximo Tailwind CSS con estos trucos prácticos.',tags:['CSS','Tailwind','Frontend']},
-    ],
     projects:[
       {title:'E-commerce Platform',cat:'Web',emoji:'🛍️',desc:'Tienda online completa con pasarela de pagos, panel admin y analíticas en tiempo real.',techs:['Next.js','Stripe','PostgreSQL']},
       {title:'Task Manager App',cat:'Mobile',emoji:'✅',desc:'App móvil de gestión de tareas con sincronización en la nube y notificaciones push.',techs:['React Native','Firebase']},

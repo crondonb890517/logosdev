@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blog · César Rondón Batista</title>
+
+<!-- Bootstrap 5.3.3 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<!-- Alpine.js -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.7/dist/cdn.min.js"></script>
+<!-- PocketBase JS SDK -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.0/pocketbase.umd.min.js"></script>
+<!-- Ubuntu Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Custom Styles -->
+<link rel="stylesheet" href="css/styles.css">
+
+<!-- Aplica el tema ANTES de renderizar para evitar parpadeo (FOUC) -->
+<script>
+  (function(){
+    try{
+      var t = localStorage.getItem('u-theme');
+      if(!t){
+        t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-bs-theme', t);
+    }catch(e){
+      document.documentElement.setAttribute('data-bs-theme', 'light');
+    }
+  })();
+</script>
+
+<style>
+/* Estilos específicos para la página del blog */
+.mu-blog-page {
+  min-height: 100vh;
+  padding-top: 100px;
+  background: var(--bg-section);
+}
+
+.mu-blog-header {
+  background: linear-gradient(135deg, var(--u-aubergine-deep) 0%, var(--u-aubergine) 100%);
+  color: var(--u-white);
+  padding: 4rem 0;
+  margin-bottom: 3rem;
+}
+
+.mu-blog-card {
+  background: var(--bg-card);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s;
+  border: 1px solid var(--border-subtle);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.mu-blog-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(233,84,32,.15);
+  border-color: var(--u-orange);
+  color: inherit;
+}
+
+.mu-blog-img {
+  height: 200px;
+  background: linear-gradient(135deg, var(--u-aubergine-deep) 0%, var(--u-aubergine) 60%, var(--u-orange-dark) 100%);
+  display: grid;
+  place-items: center;
+  color: var(--u-white);
+  font-size: 3.5rem;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.mu-blog-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(233,84,32,.2), transparent 50%);
+}
+
+.mu-blog-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.mu-blog-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+}
+
+.mu-blog-date {
+  color: var(--text-muted);
+  font-family: 'Ubuntu Mono', monospace;
+}
+
+.mu-blog-cat {
+  background: var(--icon-bg);
+  color: var(--u-orange);
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  font-weight: 500;
+  font-family: 'Ubuntu Mono', monospace;
+}
+
+[data-bs-theme="dark"] .mu-blog-cat {
+  color: var(--u-orange-hover);
+}
+
+.mu-blog-body h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  color: var(--text-heading);
+  line-height: 1.3;
+}
+
+.mu-blog-body p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 300;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.mu-blog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.mu-read-more {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--u-orange);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-decoration: none;
+  transition: gap 0.2s;
+}
+
+[data-bs-theme="dark"] .mu-read-more {
+  color: var(--u-orange-hover);
+}
+
+.mu-read-more:hover {
+  gap: 0.6rem;
+  color: var(--u-orange-dark);
+}
+
+[data-bs-theme="dark"] .mu-read-more:hover {
+  color: var(--u-orange);
+}
+
+.mu-blog-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Blog Post Individual */
+.mu-post-detail {
+  padding-top: 100px;
+  min-height: 100vh;
+  background: var(--bg-body);
+}
+
+.mu-post-header {
+  background: linear-gradient(135deg, var(--u-aubergine-deep) 0%, var(--u-aubergine) 100%);
+  color: var(--u-white);
+  padding: 4rem 0;
+  margin-bottom: 3rem;
+}
+
+.mu-post-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+.mu-post-meta {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  opacity: 0.9;
+}
+
+.mu-post-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
+}
+
+.mu-post-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+.mu-post-content h2 {
+  color: var(--text-heading);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.mu-post-content p {
+  margin-bottom: 1.5rem;
+  color: var(--text-body);
+}
+
+.mu-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--u-orange);
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  transition: gap 0.2s;
+}
+
+.mu-back-link:hover {
+  gap: 0.8rem;
+}
+
+.mu-post-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* Filtros de blog */
+.mu-blog-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.mu-filter-btn {
+  padding: 0.55rem 1.3rem;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid var(--tab-border);
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.88rem;
+  color: var(--text-body);
+}
+
+.mu-filter-btn:hover {
+  border-color: var(--u-orange);
+  color: var(--u-orange);
+}
+
+.mu-filter-btn.active {
+  background: var(--u-orange);
+  border-color: var(--u-orange);
+  color: var(--u-white);
+  box-shadow: 0 2px 8px rgba(233,84,32,.3);
+}
+
+/* Búsqueda */
+.mu-search-box {
+  max-width: 500px;
+  margin: 0 auto 2rem;
+}
+
+.mu-search-input {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-body);
+  font-size: 1rem;
+}
+
+.mu-search-input:focus {
+  outline: none;
+  border-color: var(--u-orange);
+  box-shadow: 0 0 0 3px rgba(233,84,32,.1);
+}
+</style>
+</head>
+<body x-data="blogPage()">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg mu-navbar fixed-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2 text-white" href="index.html">
+      <span class="mu-logo-mark">CR</span>
+      <span>cesar.dev</span>
+    </a>
+
+    <!-- Toggle de tema + hamburguer · MÓVIL -->
+    <div class="d-flex align-items-center gap-2 d-lg-none">
+      <button class="mu-theme-toggle" @click="toggleTheme" :aria-label="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <i class="bi" :class="theme === 'dark' ? 'bi-sun-fill' : 'bi-moon-stars-fill'"></i>
+      </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+        <li class="nav-item"><a class="nav-link" href="index.html#about">Sobre mí</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#skills">Skills</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#experience">Experiencia</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#projects">Proyectos</a></li>
+        <li class="nav-item"><a class="nav-link active" href="blog.html">Blog</a></li>
+
+        <!-- Toggle de tema · DESKTOP -->
+        <li class="nav-item d-none d-lg-flex">
+          <button class="mu-theme-toggle" @click="toggleTheme" :aria-label="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+            <i class="bi" :class="theme === 'dark' ? 'bi-sun-fill' : 'bi-moon-stars-fill'"></i>
+          </button>
+        </li>
+
+        <li class="nav-item ms-lg-2">
+          <a class="btn btn-mu-primary" href="index.html#contact">Contactar</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- BLOG LISTING PAGE -->
+<div x-show="!currentPost" class="mu-blog-page" x-transition.opacity>
+  <!-- Header -->
+  <header class="mu-blog-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+          <div class="eyebrow" style="color: var(--u-orange);">// Blog</div>
+          <h1 class="mb-3" style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 300;">Artículos y tutoriales</h1>
+          <p style="opacity: 0.9; font-weight: 300; font-size: 1.1rem;">Reflexiones, tutoriales y experiencias sobre desarrollo de software.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container">
+    <!-- Barra de búsqueda -->
+    <div class="mu-search-box">
+      <input 
+        type="text" 
+        class="mu-search-input" 
+        placeholder="🔍 Buscar artículos por título, categoría o tags..."
+        x-model="searchQuery"
+      />
+    </div>
+
+    <!-- Filtros -->
+    <div class="mu-blog-filters">
+      <button class="mu-filter-btn" :class="filterCategory === 'all' ? 'active' : ''" @click="filterCategory = 'all'">Todos</button>
+      <template x-for="cat in categories">
+        <button class="mu-filter-btn" :class="filterCategory === cat ? 'active' : ''" @click="filterCategory = cat" x-text="cat"></button>
+      </template>
+    </div>
+
+    <!-- Grid de artículos -->
+    <div class="row g-4">
+      <template x-for="post in filteredPosts" :key="post.id || post.title">
+        <div class="col-md-6 col-lg-4">
+          <a :href="'blog.html?post=' + encodeURIComponent(post.title)" class="mu-blog-card" x-data="{ post: post }">
+            <div class="mu-blog-img" x-text="post.emoji"></div>
+            <div class="mu-blog-body">
+              <div class="mu-blog-meta">
+                <span class="mu-blog-date" x-text="post.date"></span>
+                <span class="mu-blog-cat" x-text="post.category"></span>
+              </div>
+              <h3 x-text="post.title"></h3>
+              <p x-text="post.excerpt"></p>
+              <div class="mu-blog-footer">
+                <span class="mu-read-more">Leer más <i class="bi bi-arrow-right"></i></span>
+                <div class="mu-blog-tags">
+                  <template x-for="tag in post.tags.slice(0, 3)">
+                    <span class="mu-tech" x-text="tag"></span>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </template>
+      
+      <!-- Mensaje cuando no hay resultados -->
+      <div x-show="filteredPosts.length === 0" class="col-12 text-center py-5">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+        <h3 style="color: var(--text-heading);">No se encontraron artículos</h3>
+        <p style="color: var(--text-muted);">Intenta con otra búsqueda o categoría.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- BLOG POST DETAIL PAGE -->
+<div x-show="currentPost" class="mu-post-detail" x-transition.opacity>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <!-- Botón volver -->
+        <a href="blog.html" class="mu-back-link" @click.prevent="goBack">
+          <i class="bi bi-arrow-left"></i> Volver al blog
+        </a>
+
+        <!-- Header del post -->
+        <header class="mu-post-header rounded-4 mb-4">
+          <div class="py-4">
+            <div class="mu-blog-meta mb-3">
+              <span class="mu-blog-cat" x-text="currentPost?.category"></span>
+            </div>
+            <h1 class="mu-post-title" x-text="currentPost?.title"></h1>
+            <div class="mu-post-meta">
+              <div class="mu-post-meta-item">
+                <i class="bi bi-calendar"></i>
+                <span x-text="currentPost?.date"></span>
+              </div>
+              <div class="mu-post-meta-item">
+                <i class="bi bi-clock"></i>
+                <span>Lectura: 5 min</span>
+              </div>
+              <div class="mu-post-meta-item">
+                <i class="bi bi-person"></i>
+                <span>César Rondón</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Contenido del post -->
+        <article class="mu-post-content">
+          <p class="lead" style="color: var(--text-muted);" x-text="currentPost?.excerpt"></p>
+          
+          <div style="margin-top: 2rem;">
+            <p>Aquí iría el contenido completo del artículo. Este es un ejemplo de cómo se vería la página individual de un post del blog.</p>
+            
+            <h2>Introducción</h2>
+            <p>En este artículo exploraremos los conceptos fundamentales relacionados con <strong x-text="currentPost?.title"></strong>. Este tema es esencial para cualquier desarrollador que quiera mejorar sus habilidades.</p>
+            
+            <h2>Puntos clave</h2>
+            <p>Analizaremos las mejores prácticas, los errores comunes y cómo evitarlos. También veremos ejemplos prácticos que podrás aplicar en tus propios proyectos.</p>
+            
+            <blockquote style="border-left: 4px solid var(--u-orange); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--text-muted);">
+              "El código limpio no es solo sobre que funcione, es sobre que sea fácil de mantener y entender."
+            </blockquote>
+            
+            <h2>Conclusión</h2>
+            <p>Espero que este artículo te haya sido útil. Si tienes alguna pregunta o comentario, no dudes en contactarme.</p>
+          </div>
+
+          <!-- Tags del post -->
+          <div class="mu-post-tags">
+            <span style="color: var(--text-muted); font-size: 0.9rem;">Tags:</span>
+            <template x-for="tag in currentPost?.tags">
+              <span class="mu-tech" x-text="tag"></span>
+            </template>
+          </div>
+        </article>
+
+        <!-- Navegación entre posts -->
+        <div class="row mt-5 pt-4" style="border-top: 1px solid var(--border-subtle);">
+          <div class="col-md-6">
+            <template x-if="prevPost">
+              <a :href="'blog.html?post=' + encodeURIComponent(prevPost.title)" class="d-block p-3 rounded" style="background: var(--bg-card); border: 1px solid var(--border-subtle); text-decoration: none; color: inherit;" @click.prevent="loadPost(prevPost.title)">
+                <div style="font-size: 0.8rem; color: var(--text-muted);">← Artículo anterior</div>
+                <div style="font-weight: 500; color: var(--u-orange);" x-text="prevPost?.title"></div>
+              </a>
+            </template>
+          </div>
+          <div class="col-md-6">
+            <template x-if="nextPost">
+              <a :href="'blog.html?post=' + encodeURIComponent(nextPost.title)" class="d-block p-3 rounded text-end" style="background: var(--bg-card); border: 1px solid var(--border-subtle); text-decoration: none; color: inherit;" @click.prevent="loadPost(nextPost.title)">
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Siguiente artículo →</div>
+                <div style="font-weight: 500; color: var(--u-orange);" x-text="nextPost?.title"></div>
+              </a>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="mu-footer">
+  <div class="container">
+    <div class="socials mb-3">
+      <a href="#" aria-label="GitHub"><i class="bi bi-github"></i></a>
+      <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+      <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+      <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+    </div>
+    <p>© <span x-text="new Date().getFullYear()"></span> César Rondón Batista. Hecho con <span class="heart">❤</span> y café.</p>
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- App JS -->
+<script src="js/app.js"></script>
+
+<script>
+function blogPage() {
+  return {
+    theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
+    blogPosts: [],
+    searchQuery: '',
+    filterCategory: 'all',
+    categories: [],
+    currentPost: null,
+    prevPost: null,
+    nextPost: null,
+    navbarCollapse: null,
+
+    init() {
+      // Inicializar collapse del navbar
+      this.$nextTick(() => {
+        const navEl = document.getElementById('mainNav');
+        if(navEl) {
+          this.navbarCollapse = new bootstrap.Collapse(navEl, {toggle: false});
+        }
+      });
+
+      // Cargar posts del blog
+      this.loadBlogPosts();
+
+      // Verificar si hay un post específico en la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const postTitle = urlParams.get('post');
+      
+      if (postTitle) {
+        // Esperar a que se carguen los posts
+        setTimeout(() => {
+          this.loadPost(decodeURIComponent(postTitle));
+        }, 100);
+      }
+    },
+
+    async loadBlogPosts() {
+      const PB_URL = 'https://logosdev.pockethost.io';
+      const COLLECTION_NAME = 'blog_posts';
+
+      try {
+        const pb = new PocketBase(PB_URL);
+        const records = await pb.collection(COLLECTION_NAME).getFullList({
+          sort: '-created',
+          filter: 'published = true',
+        });
+
+        this.blogPosts = records.map(record => ({
+          id: record.id,
+          title: record.title,
+          date: record.date || new Date(record.created).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }),
+          category: record.category || 'General',
+          emoji: record.emoji || '📝',
+          excerpt: record.excerpt,
+          tags: record.tags || [],
+          content: record.content || ''
+        }));
+      } catch (error) {
+        console.error('Error al cargar posts desde PocketBase:', error);
+        // Fallback a datos locales
+        this.blogPosts = [
+          {id:1, title:'Introducción a React Server Components', date:'15 Mar 2025', category:'Tutorial', emoji:'⚛️', excerpt:'Descubre cómo los Server Components están cambiando la forma de construir aplicaciones React.', tags:['React','Next.js','SSR'], content:''},
+          {id:2, title:'Optimizando consultas en PostgreSQL', date:'08 Mar 2025', category:'Base de Datos', emoji:'🐘', excerpt:'Técnicas avanzadas para mejorar el rendimiento de tus queries en PostgreSQL.', tags:['PostgreSQL','Performance','SQL'], content:''},
+          {id:3, title:'Mi experiencia con Docker en producción', date:'01 Mar 2025', category:'DevOps', emoji:'🐳', excerpt:'Lecciones aprendidas al implementar contenedores Docker en entornos productivos.', tags:['Docker','DevOps','CI/CD'], content:''},
+          {id:4, title:'Patrones de diseño en JavaScript moderno', date:'22 Feb 2025', category:'Arquitectura', emoji:'📘', excerpt:'Los patrones de diseño esenciales que todo desarrollador JS debería conocer.', tags:['JavaScript','Patrones','Clean Code'], content:''},
+          {id:5, title:'Construyendo APIs REST con Node.js', date:'15 Feb 2025', category:'Backend', emoji:'🟢', excerpt:'Guía completa para crear APIs robustas y escalables con Node.js y Express.', tags:['Node.js','Express','API'], content:''},
+          {id:6, title:'Tailwind CSS: Trucos y consejos', date:'08 Feb 2025', category:'Frontend', emoji:'🎨', excerpt:'Aprende a aprovechar al máximo Tailwind CSS con estos trucos prácticos.', tags:['CSS','Tailwind','Frontend'], content:''},
+        ];
+      }
+
+      // Extraer categorías únicas
+      const cats = [...new Set(this.blogPosts.map(p => p.category))];
+      this.categories = cats;
+    },
+
+    get filteredPosts() {
+      let posts = this.blogPosts;
+
+      // Filtrar por categoría
+      if (this.filterCategory !== 'all') {
+        posts = posts.filter(p => p.category === this.filterCategory);
+      }
+
+      // Filtrar por búsqueda
+      if (this.searchQuery.trim()) {
+        const query = this.searchQuery.toLowerCase().trim();
+        posts = posts.filter(p => 
+          p.title.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          p.tags.some(tag => tag.toLowerCase().includes(query)) ||
+          p.excerpt.toLowerCase().includes(query)
+        );
+      }
+
+      return posts;
+    },
+
+    loadPost(title) {
+      const postIndex = this.blogPosts.findIndex(p => p.title === title);
+      
+      if (postIndex === -1) {
+        console.error('Post no encontrado:', title);
+        return;
+      }
+
+      this.currentPost = this.blogPosts[postIndex];
+      
+      // Configurar navegación
+      this.prevPost = postIndex > 0 ? this.blogPosts[postIndex - 1] : null;
+      this.nextPost = postIndex < this.blogPosts.length - 1 ? this.blogPosts[postIndex + 1] : null;
+
+      // Actualizar URL sin recargar
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?post=' + encodeURIComponent(title);
+      window.history.pushState({path: newUrl}, '', newUrl);
+
+      // Scroll al top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    goBack() {
+      this.currentPost = null;
+      this.prevPost = null;
+      this.nextPost = null;
+      
+      // Limpiar URL
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.pushState({path: newUrl}, '', newUrl);
+    },
+
+    toggleTheme() {
+      this.theme = this.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-bs-theme', this.theme);
+      try{ localStorage.setItem('u-theme', this.theme); }catch(e){}
+    },
+
+    closeMenu(){
+      if(this.navbarCollapse && window.innerWidth < 992) {
+        this.navbarCollapse.hide();
+      }
+    }
+  }
+}
+
+// Reveal on scroll
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:.12});
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+});
+</script>
+</body>
+</html>
