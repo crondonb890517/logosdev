@@ -435,6 +435,57 @@
     border:1px solid var(--u-orange);
   }
 
+  /* BLOG */
+  .mu-blog{background:var(--bg-section)}
+  .mu-blog-card{
+    background:var(--bg-card);border-radius:4px;overflow:hidden;
+    box-shadow:var(--shadow-sm);transition:all .25s;
+    border:1px solid var(--border-subtle);height:100%;
+    display:flex;flex-direction:column;
+  }
+  .mu-blog-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 12px 28px rgba(233,84,32,.15);
+    border-color:var(--u-orange);
+  }
+  .mu-blog-img{
+    height:180px;
+    background:linear-gradient(135deg,var(--u-aubergine-deep) 0%,var(--u-aubergine) 60%,var(--u-orange-dark) 100%);
+    display:grid;place-items:center;color:var(--u-white);
+    font-size:3.5rem;font-weight:500;position:relative;overflow:hidden;
+  }
+  .mu-blog-img::after{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 30%,rgba(233,84,32,.2),transparent 50%);
+  }
+  .mu-blog-body{padding:1.5rem;flex-grow:1;display:flex;flex-direction:column}
+  .mu-blog-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:.8rem;font-size:.75rem;
+  }
+  .mu-blog-date{color:var(--text-muted);font-family:'Ubuntu Mono',monospace}
+  .mu-blog-cat{
+    display:inline-block;background:var(--icon-bg);color:var(--u-orange);
+    padding:.15rem .6rem;border-radius:3px;font-size:.7rem;
+    font-weight:500;font-family:'Ubuntu Mono',monospace;letter-spacing:.5px;
+  }
+  [data-bs-theme="dark"] .mu-blog-cat{color:var(--u-orange-hover)}
+  .mu-blog-body h3{font-size:1.1rem;font-weight:500;margin-bottom:.5rem;color:var(--text-heading);line-height:1.3}
+  .mu-blog-body p{font-size:.88rem;color:var(--text-muted);font-weight:300;margin-bottom:1rem;line-height:1.6}
+  .mu-blog-footer{
+    margin-top:auto;display:flex;justify-content:space-between;
+    align-items:center;gap:1rem;flex-wrap:wrap;
+  }
+  .mu-read-more{
+    font-size:.82rem;font-weight:500;color:var(--u-orange);
+    display:inline-flex;align-items:center;gap:.3rem;
+    text-decoration:none;transition:gap .2s;
+  }
+  [data-bs-theme="dark"] .mu-read-more{color:var(--u-orange-hover)}
+  .mu-read-more:hover{gap:.6rem;color:var(--u-orange-dark)}
+  [data-bs-theme="dark"] .mu-read-more:hover{color:var(--u-orange)}
+  .mu-blog-tags{display:flex;flex-wrap:wrap;gap:.3rem}
+
   /* FOOTER (siempre oscuro) */
   .mu-footer{
     background:var(--u-aubergine-dark);color:var(--u-white);
