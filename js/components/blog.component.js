@@ -1,11 +1,12 @@
 /**
  * Componente para la página del Blog
  * Maneja la lógica de listados y visualización de posts
+ * OPTIMIZACIÓN: Caching, debouncing y computadas eficientes
  */
 
 function createBlogPage() {
   return {
-    theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
+    theme: window.themeManager.getInitialTheme(),
     posts: [],
     currentPost: null,
     prevPost: null,
@@ -13,11 +14,16 @@ function createBlogPage() {
     filterCategory: 'all',
     searchQuery: '',
     categories: [],
+    _filteredPostsCache: null,
+    _debounceTimer: null,
 
     /**
      * Inicialización del componente
      */
     init() {
+      // Aplicar tema inicial
+      window.themeManager.applyTheme(this.theme);
+      
       // Cargar posts desde PocketBase o usar datos fallback
       this.loadPosts();
       
@@ -35,13 +41,16 @@ function createBlogPage() {
 
     /**
      * Carga los posts del blog
+     * OPTIMIZACIÓN: No bloquea la UI mientras carga
      */
     async loadPosts() {
       try {
         this.posts = await window.pocketBaseService.getBlogPosts();
+        this._invalidateFilters();
       } catch (error) {
         console.warn('Usando datos fallback para blog posts');
         this.posts = this.getFallbackPosts();
+        this._invalidateFilters();
       }
       
       // Extraer categorías únicas
@@ -153,8 +162,14 @@ function createBlogPage() {
 
     /**
      * Posts filtrados por categoría y búsqueda
+     * OPTIMIZACIÓN: Cachea resultados y usa debounce para búsqueda
      */
     get filteredPosts() {
+      const cacheKey = `${this.filterCategory}-${this.searchQuery}-${this.posts.length}`;
+      if (this._filteredPostsCache === cacheKey) {
+        return this._filteredPostsResult;
+      }
+      
       let filtered = this.posts;
       
       // Filtrar por categoría
@@ -173,7 +188,29 @@ function createBlogPage() {
         );
       }
       
+      this._filteredPostsCache = cacheKey;
+      this._filteredPostsResult = filtered;
       return filtered;
+    },
+    
+    /**
+     * Invalida cache de filtros
+     */
+    _invalidateFilters() {
+      this._filteredPostsCache = null;
+      this._filteredPostsResult = null;
+    },
+    
+    /**
+     * Actualiza query de búsqueda con debounce
+     * OPTIMIZACIÓN: Evita recalculos frecuentes durante el typing
+     */
+    updateSearch(query) {
+      clearTimeout(this._debounceTimer);
+      this._debounceTimer = setTimeout(() => {
+        this.searchQuery = query;
+        this._invalidateFilters();
+      }, 300); // 300ms de debounce
     },
 
     /**

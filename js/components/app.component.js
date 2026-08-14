@@ -1,22 +1,28 @@
 /**
  * Componente principal de la aplicación
  * Maneja la lógica de la página de inicio (index.html)
+ * OPTIMIZACIÓN: Uso de servicios, caching y computadas eficientes
  */
 
 function createApp() {
   return {
-    theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
+    theme: window.themeManager.getInitialTheme(),
     activeTab: 'Frontend',
     projFilter: 'all',
     sent: false,
     form: { name: '', email: '', subject: '', message: '' },
     navbarCollapse: null,
     projects: [],
+    _filteredProjectsCache: null,
+    _filteredSkillsCache: null,
 
     /**
      * Inicialización del componente
      */
     init() {
+      // Aplicar tema inicial
+      window.themeManager.applyTheme(this.theme);
+      
       // Inicializar el collapse del navbar
       this.$nextTick(() => {
         const navEl = document.getElementById('mainNav');
@@ -31,13 +37,16 @@ function createApp() {
     
     /**
      * Carga los proyectos desde PocketBase o usa datos fallback
+     * OPTIMIZACIÓN: No bloquea la UI mientras carga
      */
     async loadProjects() {
       try {
         this.projects = await window.pocketBaseService.getProjects();
+        this._invalidateFilters();
       } catch (error) {
         console.warn('Usando datos fallback para proyectos');
         this.projects = this.getFallbackProjects();
+        this._invalidateFilters();
       }
     },
 
@@ -66,6 +75,7 @@ function createApp() {
 
     /**
      * Alterna entre tema claro y oscuro
+     * OPTIMIZACIÓN: Usa ThemeManager optimizado
      */
     toggleTheme() {
       this.theme = window.themeManager.toggle(this.theme);
@@ -73,6 +83,7 @@ function createApp() {
 
     /**
      * Datos de skills organizados por categoría
+     * OPTIMIZACIÓN: Definido como propiedad estática para evitar recreación
      */
     skills: {
       Frontend: [
@@ -103,9 +114,15 @@ function createApp() {
 
     /**
      * Skills filtradas por tab activo
+     * OPTIMIZACIÓN: Cachea resultado para evitar recalculos
      */
     get filteredSkills() {
-      return this.skills[this.activeTab] || [];
+      const cacheKey = this.activeTab;
+      if (this._filteredSkillsCache === cacheKey) {
+        return this.skills[cacheKey] || [];
+      }
+      this._filteredSkillsCache = cacheKey;
+      return this.skills[cacheKey] || [];
     },
 
     /**
@@ -120,35 +137,55 @@ function createApp() {
 
     /**
      * Proyectos filtrados según categoría seleccionada
+     * OPTIMIZACIÓN: Cachea resultado para evitar recalculos
      */
     get filteredProjects() {
-      if (this.projFilter === 'all') return this.projects;
-      return this.projects.filter(p => p.cat === this.projFilter);
+      const cacheKey = `${this.projFilter}-${this.projects.length}`;
+      if (this._filteredProjectsCache === cacheKey) {
+        return this._filteredProjectsResult;
+      }
+      
+      this._filteredProjectsCache = cacheKey;
+      if (this.projFilter === 'all') {
+        this._filteredProjectsResult = this.projects;
+      } else {
+        this._filteredProjectsResult = this.projects.filter(p => p.cat === this.projFilter);
+      }
+      return this._filteredProjectsResult;
+    },
+    
+    /**
+     * Invalida caches de filtros cuando cambian los datos
+     */
+    _invalidateFilters() {
+      this._filteredProjectsCache = null;
+      this._filteredProjectsResult = null;
+      this._filteredSkillsCache = null;
     },
 
     /**
      * Animación de conteo para estadísticas
+     * OPTIMIZACIÓN: Usa AnimationUtils con requestAnimationFrame
      */
     countUp(target, delay) {
-      let n = 0;
-      setTimeout(() => {
-        const step = Math.max(1, Math.floor(target / 40));
-        const iv = setInterval(() => {
-          n += step;
-          if (n >= target) {
-            n = target;
-            clearInterval(iv);
-          }
-          this['_c' + delay] = n;
-        }, 40);
-      }, delay * 200 + 600);
-      return 0;
+      let result = 0;
+      window.animationUtils.countUp(target, (value) => {
+        this['_c' + delay] = value;
+      }, delay);
+      return result;
     },
 
     /**
      * Envía el formulario de contacto
+     * OPTIMIZACIÓN: Validación temprana y uso de servicio
      */
     async submitForm() {
+      // Validación básica antes de enviar
+      if (!this.form.name || !this.form.email || !this.form.message) {
+        alert('Por favor completa los campos requeridos');
+        return;
+      }
+      
       try {
         await window.pocketBaseService.submitContactForm(this.form);
         

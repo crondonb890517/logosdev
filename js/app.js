@@ -1,18 +1,26 @@
+/**
+ * Aplicación principal - Punto de entrada
+ * OPTIMIZACIÓN: Carga diferida y inicialización eficiente
+ */
 
 // PocketBase ya está disponible globalmente desde el CDN en index.html
-// No es necesario importarlo como módulo ES6
 
 function app(){
   return {
-    theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
+    theme: window.themeManager ? window.themeManager.getInitialTheme() : (document.documentElement.getAttribute('data-bs-theme') || 'light'),
     activeTab:'Frontend',
     projFilter:'all',
     sent:false,
     form:{name:'',email:'',subject:'',message:''},
     navbarCollapse: null,
-    projects: [], // Inicialmente vacío, se cargará desde PocketBase
+    projects: [],
 
     init(){
+      // Aplicar tema inicial si está disponible
+      if (window.themeManager) {
+        window.themeManager.applyTheme(this.theme);
+      }
+      
       // Inicializar el collapse del navbar después de que Alpine se inicialice
       this.$nextTick(() => {
         const navEl = document.getElementById('mainNav');
@@ -26,55 +34,41 @@ function app(){
     },
     
     async loadProjectsFromPB() {
-      // CONFIGURACIÓN: Cambia esta URL por la de tu instancia de PocketBase
-      const PB_URL = 'https://logosdev.pockethost.io'; 
-      const COLLECTION_NAME = 'projects'; // Nombre de tu colección en PocketBase
-      
-      try {
-        const pb = new PocketBase(PB_URL);
-        
-        // Obtener datos de PocketBase
-        // Asegúrate de que tu colección tenga los campos: title, description, image, tags, category
-        const records = await pb.collection(COLLECTION_NAME).getFullList({
-          sort: '-created',
-          filter: 'published = true', // Opcional: si tienes un campo booleano 'published'
-        });
-
-        // Transformar datos de PocketBase al formato esperado
-        this.projects = records.map(record => ({
-          title: record.title,
-          cat: record.category || 'Web',
-          emoji: record.emoji || '🚀',
-          desc: record.description,
-          techs: record.tags || [],
-          image: record.image ? pb.getFileUrl(record, record.image) : null
-        }));
-        
-      } catch (error) {
-        console.error('Error al cargar proyectos desde PocketBase:', error);
-        // Fallback a datos locales si falla la conexión
-        this.projects = [
-          {title:'E-commerce Platform',cat:'Web',emoji:'🛍️',desc:'Tienda online completa con pasarela de pagos, panel admin y analíticas en tiempo real.',techs:['Next.js','Stripe','PostgreSQL']},
-          {title:'Task Manager App',cat:'Mobile',emoji:'✅',desc:'App móvil de gestión de tareas con sincronización en la nube y notificaciones push.',techs:['React Native','Firebase']},
-          {title:'Analytics API',cat:'API',emoji:'📊',desc:'API REST de alto rendimiento para procesamiento de datos analíticos con +1M requests/día.',techs:['Node.js','Redis','Docker']},
-          {title:'Social Dashboard',cat:'Web',emoji:'💬',desc:'Dashboard unificado para gestionar múltiples redes sociales con IA para sugerencias.',techs:['Vue','Python','OpenAI']},
-          {title:'Fitness Tracker',cat:'Mobile',emoji:'💪',desc:'App de seguimiento de entrenamientos con rutinas personalizadas y métricas.',techs:['Flutter','GraphQL']},
-          {title:'Booking System',cat:'API',emoji:'📅',desc:'Sistema de reservas multi-tenant con calendario en tiempo real y webhooks.',techs:['Node.js','MongoDB']},
-        ];
+      // Usar servicio optimizado si está disponible
+      if (window.pocketBaseService) {
+        try {
+          this.projects = await window.pocketBaseService.getProjects();
+          return;
+        } catch (error) {
+          console.warn('Error cargando desde PocketBase, usando fallback');
+        }
       }
+      
+      // Fallback directo si no hay servicio
+      this.projects = [
+        {title:'E-commerce Platform',cat:'Web',emoji:'🛍️',desc:'Tienda online completa con pasarela de pagos, panel admin y analíticas en tiempo real.',techs:['Next.js','Stripe','PostgreSQL']},
+        {title:'Task Manager App',cat:'Mobile',emoji:'✅',desc:'App móvil de gestión de tareas con sincronización en la nube y notificaciones push.',techs:['React Native','Firebase']},
+        {title:'Analytics API',cat:'API',emoji:'📊',desc:'API REST de alto rendimiento para procesamiento de datos analíticos con +1M requests/día.',techs:['Node.js','Redis','Docker']},
+        {title:'Social Dashboard',cat:'Web',emoji:'💬',desc:'Dashboard unificado para gestionar múltiples redes sociales con IA para sugerencias.',techs:['Vue','Python','OpenAI']},
+        {title:'Fitness Tracker',cat:'Mobile',emoji:'💪',desc:'App de seguimiento de entrenamientos con rutinas personalizadas y métricas.',techs:['Flutter','GraphQL']},
+        {title:'Booking System',cat:'API',emoji:'📅',desc:'Sistema de reservas multi-tenant con calendario en tiempo real y webhooks.',techs:['Node.js','MongoDB']},
+      ];
     },
 
     closeMenu(){
-      // Cerrar el menú móvil al hacer click en un enlace
       if(this.navbarCollapse && window.innerWidth < 992) {
         this.navbarCollapse.hide();
       }
     },
 
     toggleTheme(){
-      this.theme = this.theme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-bs-theme', this.theme);
-      try{ localStorage.setItem('u-theme', this.theme); }catch(e){}
+      if (window.themeManager) {
+        this.theme = window.themeManager.toggle(this.theme);
+      } else {
+        this.theme = this.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-bs-theme', this.theme);
+        try{ localStorage.setItem('u-theme', this.theme); }catch(e){}
+      }
     },
 
     skills:{
@@ -124,51 +118,12 @@ function app(){
     },
     countUp(target,delay){
       let n=0;
-      setTimeout(()=>{
-        const step=Math.max(1,Math.floor(target/40));
-        const iv=setInterval(()=>{
-          n+=step;
-          if(n>=target){n=target;clearInterval(iv)}
-          this['_c'+delay]=n;
-        },40);
-      },delay*200+600);
-      return 0;
-    },
+      setTimeout(()=>{\n        const step=Math.max(1,Math.floor(target/40));\n        const animate = () => {\n          n+=step;\n          if(n>=target){n=target;return}\n          this['_c'+delay]=n;\n          requestAnimationFrame(animate);\n        };\n        requestAnimationFrame(animate);\n      },delay*200+600);\n      return 0;\n    },
     async submitForm(){
-      const PB_URL = 'https://logosdev.pockethost.io';
-      const COLLECTION_NAME = 'contactos';
-      
-      try {
-        const pb = new PocketBase(PB_URL);
-        
-        // Preparar los datos según los campos de la colección
-        const data = {
-          nombre_completo: this.form.name,
-          correo_electronico: this.form.email,
-          asunto: this.form.subject,
-          mensage: this.form.message
-        };
-        
-        // Insertar el registro en la colección 'contactos'
-        await pb.collection(COLLECTION_NAME).create(data);
-        
-        this.sent = true;
-        this.form = { name: '', email: '', subject: '', message: '' };
-        setTimeout(() => this.sent = false, 4000);
-        
-      } catch (error) {
-        console.error('Error al enviar el formulario:', error);
-        alert('Hubo un error al enviar el mensaje. Por favor, intenta de nuevo.');
-      }
-    },
-  }
-}
-
-// Reveal on scroll
-const io=new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
-},{threshold:.12});
-document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-});
-
+      if (window.pocketBaseService) {
+        try {
+          await window.pocketBaseService.submitContactForm(this.form);
+          this.sent = true;
+          this.form = { name: '', email: '', subject: '', message: '' };\n          setTimeout(() => this.sent = false, 4000);\n          return;
+        } catch (error) {\n          console.error('Error al enviar el formulario:', error);\n        }\n      }\n      \n      // Fallback si no hay servicio\n      alert('Hubo un error al enviar el mensaje. Por favor, intenta de nuevo.');\n    },
+  }\n}\n\n// Reveal on scroll optimizado\nconst ScrollReveal = {\n  _observer: null,\n  init() {\n    if (this._observer) return;\n    \n    this._observer = new IntersectionObserver((entries) => {\n      entries.forEach(e => {\n        if(e.isIntersecting) {\n          e.target.classList.add('visible');\n          this._observer.unobserve(e.target);\n        }\n      });\n    }, {threshold: 0.12});\n    \n    document.addEventListener('DOMContentLoaded', () => {\n      document.querySelectorAll('.reveal').forEach(el => this._observer.observe(el));\n    });\n  }\n};\n\nScrollReveal.init();
