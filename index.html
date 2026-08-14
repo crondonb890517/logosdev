@@ -61,7 +61,7 @@
         <li class="nav-item"><a class="nav-link" href="#skills" @click="closeMenu">Skills</a></li>
         <li class="nav-item"><a class="nav-link" href="#experience" @click="closeMenu">Experiencia</a></li>
         <li class="nav-item"><a class="nav-link" href="#projects" @click="closeMenu">Proyectos</a></li>
-        <li class="nav-item"><a class="nav-link" href="#blog" @click="closeMenu">Blog</a></li>
+        <li class="nav-item"><a class="nav-link" href="blog.html" @click="closeMenu">Blog</a></li>
 
         <!-- Toggle de tema · DESKTOP -->
         <li class="nav-item d-none d-lg-flex">
@@ -310,43 +310,6 @@
           </div>
         </form>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- BLOG -->
-<section class="mu-blog" id="blog">
-  <div class="container">
-    <div class="mu-section-head reveal">
-      <div class="eyebrow">// Blog</div>
-      <h2>Mis <span class="accent">artículos</span></h2>
-      <p>Reflexiones, tutoriales y experiencias sobre desarrollo de software.</p>
-    </div>
-
-    <div class="row g-4 reveal">
-      <template x-for="post in blogPosts">
-        <div class="col-md-6 col-lg-4">
-          <article class="mu-blog-card">
-            <div class="mu-blog-img" x-text="post.emoji"></div>
-            <div class="mu-blog-body">
-              <div class="mu-blog-meta">
-                <span class="mu-blog-date" x-text="post.date"></span>
-                <span class="mu-blog-cat" x-text="post.category"></span>
-              </div>
-              <h3 x-text="post.title"></h3>
-              <p x-text="post.excerpt"></p>
-              <div class="mu-blog-footer">
-                <a href="#" class="mu-read-more">Leer más <i class="bi bi-arrow-right"></i></a>
-                <div class="mu-blog-tags">
-                  <template x-for="tag in post.tags">
-                    <span class="mu-tech" x-text="tag"></span>
-                  </template>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-      </template>
     </div>
   </div>
 </section>
