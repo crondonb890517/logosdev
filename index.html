@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>César Rondón Batista · Software Developer</title>
+
+<!-- Bootstrap 5.3.3 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<!-- Alpine.js -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.7/dist/cdn.min.js"></script>
+<!-- PocketBase JS SDK -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.0/pocketbase.umd.min.js"></script>
+<!-- Ubuntu Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Custom Styles -->
+<link rel="stylesheet" href="css/styles.css">
+
+<!-- Aplica el tema ANTES de renderizar para evitar parpadeo (FOUC) -->
+<script>
+  (function(){
+    try{
+      var t = localStorage.getItem('u-theme');
+      if(!t){
+        t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-bs-theme', t);
+    }catch(e){
+      document.documentElement.setAttribute('data-bs-theme', 'light');
+    }
+  })();
+</script>
+</head>
+<body x-data="app()">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg mu-navbar fixed-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2 text-white" href="#home">
+      <span class="mu-logo-mark">CR</span>
+      <span>cesar.dev</span>
+    </a>
+
+    <!-- Toggle de tema + hamburguer · MÓVIL -->
+    <div class="d-flex align-items-center gap-2 d-lg-none">
+      <button class="mu-theme-toggle" @click="toggleTheme" :aria-label="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <i class="bi" :class="theme === 'dark' ? 'bi-sun-fill' : 'bi-moon-stars-fill'"></i>
+      </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+        <li class="nav-item"><a class="nav-link" href="#about" @click="closeMenu">Sobre mí</a></li>
+        <li class="nav-item"><a class="nav-link" href="#skills" @click="closeMenu">Skills</a></li>
+        <li class="nav-item"><a class="nav-link" href="#experience" @click="closeMenu">Experiencia</a></li>
+        <li class="nav-item"><a class="nav-link" href="#projects" @click="closeMenu">Proyectos</a></li>
+
+        <!-- Toggle de tema · DESKTOP -->
+        <li class="nav-item d-none d-lg-flex">
+          <button class="mu-theme-toggle" @click="toggleTheme" :aria-label="theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+            <i class="bi" :class="theme === 'dark' ? 'bi-sun-fill' : 'bi-moon-stars-fill'"></i>
+          </button>
+        </li>
+
+        <li class="nav-item ms-lg-2">
+          <a class="btn btn-mu-primary" href="#contact" @click="closeMenu">Contactar</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="mu-hero" id="home">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="mu-hero-tag mb-3"><span class="dot"></span> Disponible para nuevos proyectos</div>
+        <h1 class="mb-3">Hola, soy <span class="accent">César</span><br/>Software <span class="gold">Developer</span></h1>
+        <p class="lead mb-4">Ingeniero Informático desarrollador full-stack con +10 años construyendo aplicaciones de escritorio y web escalables, APIs robustas. Apasionado por el código limpio y las arquitecturas sólidas.</p>
+        <div class="d-flex gap-3 flex-wrap mb-5">
+          <a href="#projects" class="btn btn-mu-primary">Ver proyectos <i class="bi bi-arrow-right"></i></a>
+          <a href="#contact" class="btn btn-mu-outline">Contáctame</a>
+        </div>
+        <div class="row pt-4 border-top" style="border-color:rgba(255,255,255,.1) !important">
+          <div class="col-4 mu-stat"><div class="num" x-text="countUp(6,0)">0</div><div class="lbl">Años de experiencia</div></div>
+          <div class="col-4 mu-stat"><div class="num" x-text="countUp(50,1)">0</div><div class="lbl">Proyectos entregados</div></div>
+          <div class="col-4 mu-stat"><div class="num" x-text="countUp(30,2)">0</div><div class="lbl">Clientes satisfechos</div></div>
+        </div>
+      </div>
+      <div class="col-lg-5 text-center">
+        <div class="mu-hero-img-wrap mx-auto">
+          <img class="mu-hero-img" src="img/cesar.jpg" alt="César Rondón Batista"/>
+          <div class="mu-floating-badge mu-fb-1">⚛️ React</div>
+          <div class="mu-floating-badge mu-fb-2">🟢 Node.js</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="mu-about" id="about">
+  <div class="container">
+    <div class="mu-section-head reveal">
+      <div class="eyebrow">// Sobre mí</div>
+      <h2>Conoce un poco más <span class="accent">sobre mí</span></h2>
+      <p>Un desarrollador con pasión por resolver problemas complejos con soluciones simples.</p>
+    </div>
+    <div class="row g-5">
+      <div class="col-lg-6 reveal">
+        <h3>Desarrollador Full-Stack radicado en Bayamo 🇨🇺</h3>
+        <p>Me especializo en construir productos digitales de principio a fin. Desde la arquitectura de la base de datos hasta el último píxel de la interfaz, disfruto cada etapa del proceso.</p>
+        <p>He trabajado con startups y empresas consolidadas, ayudándoles a transformar ideas en productos reales que impactan a miles de usuarios. Mi enfoque combina buenas prácticas de ingeniería con un fuerte sentido del diseño.</p>
+        <div class="row g-3 mt-4">
+          <div class="col-sm-6"><div class="mu-info-item"><div class="k">Nombre</div><div class="v">César Rondón Batista</div></div></div>
+          <div class="col-sm-6"><div class="mu-info-item"><div class="k">Email</div><div class="v">crondonb890517@gmail.com</div></div></div>
+          <div class="col-sm-6"><div class="mu-info-item"><div class="k">Ubicación</div><div class="v">Bayamo, Cuba</div></div></div>
+          <div class="col-sm-6"><div class="mu-info-item"><div class="k">Disponibilidad</div><div class="v">Freelance / Full-time</div></div></div>
+        </div>
+      </div>
+      <div class="col-lg-6 reveal">
+        <div class="mu-about-card">
+          <h4>Mis principios</h4>
+          <ul class="mu-about-list">
+            <li>Código limpio y mantenible</li>
+            <li>Comunicación clara y constante</li>
+            <li>Entregas puntuales y transparentes</li>
+            <li>Aprendizaje continuo</li>
+            <li>Enfoque en el valor de negocio</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="mu-skills" id="skills">
+  <div class="container">
+    <div class="mu-section-head reveal">
+      <div class="eyebrow">// Skills</div>
+      <h2>Tecnologías y <span class="accent">herramientas</span></h2>
+      <p>Stack tecnológico que utilizo para dar vida a los proyectos.</p>
+    </div>
+
+    <div class="row justify-content-center mb-4 reveal">
+      <div class="col-auto">
+        <div class="d-flex gap-2 flex-wrap justify-content-center">
+          <template x-for="tab in ['Frontend','Backend','Tools']">
+            <button class="mu-tab-btn" :class="activeTab===tab?'active':''" @click="activeTab=tab" x-text="tab"></button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 reveal">
+      <template x-for="skill in filteredSkills">
+        <div class="col-md-6 col-lg-4">
+          <div class="mu-skill-card">
+            <div class="mu-skill-head">
+              <div class="mu-skill-name">
+                <span class="mu-skill-icon" x-text="skill.icon"></span>
+                <span x-text="skill.name"></span>
+              </div>
+              <div class="mu-skill-pct" x-text="skill.level+'%'"></div>
+            </div>
+            <div class="mu-skill-bar"><div class="mu-skill-fill" :style="'width:'+skill.level+'%'"></div></div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="mu-experience" id="experience">
+  <div class="container">
+    <div class="mu-section-head reveal">
+      <div class="eyebrow">// Experiencia</div>
+      <h2>Mi trayectoria <span class="accent">profesional</span></h2>
+      <p>Más de una década creciendo como desarrollador.</p>
+    </div>
+
+    <div class="mu-timeline reveal">
+      <template x-for="job in jobs">
+        <div class="mu-tl-item">
+          <div class="mu-tl-dot"></div>
+          <div class="mu-tl-card">
+            <div class="mu-tl-date" x-text="job.year"></div>
+            <h3 x-text="job.role"></h3>
+            <div class="company" x-text="job.company"></div>
+            <p x-text="job.desc"></p>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="mu-projects" id="projects">
+  <div class="container">
+    <div class="mu-section-head reveal">
+      <div class="eyebrow">// Proyectos</div>
+      <h2>Trabajos <span class="accent">destacados</span></h2>
+      <p>Una selección de mis últimos proyectos.</p>
+    </div>
+
+    <div class="row justify-content-center mb-5 reveal">
+      <div class="col-auto">
+        <div class="d-flex gap-2 flex-wrap justify-content-center">
+          <button class="mu-tab-btn" :class="projFilter==='all'?'active':''" @click="projFilter='all'">Todos</button>
+          <button class="mu-tab-btn" :class="projFilter==='Web'?'active':''" @click="projFilter='Web'">Web</button>
+          <button class="mu-tab-btn" :class="projFilter==='Mobile'?'active':''" @click="projFilter='Mobile'">Mobile</button>
+          <button class="mu-tab-btn" :class="projFilter==='API'?'active':''" @click="projFilter='API'">API</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 reveal">
+      <template x-for="proj in filteredProjects">
+        <div class="col-md-6 col-lg-4">
+          <div class="mu-proj-card">
+            <div class="mu-proj-img" x-text="proj.emoji"></div>
+            <div class="mu-proj-body">
+              <span class="mu-proj-tag" x-text="proj.cat"></span>
+              <h3 x-text="proj.title"></h3>
+              <p x-text="proj.desc"></p>
+              <div class="mu-proj-techs">
+                <template x-for="tech in proj.techs">
+                  <span class="mu-tech" x-text="tech"></span>
+                </template>
+              </div>
+              <div class="mu-proj-links mt-auto">
+                <a href="#"><i class="bi bi-github"></i> Código</a>
+                <span class="mx-2">·</span>
+                <a href="#"><i class="bi bi-box-arrow-up-right"></i> Demo</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="mu-contact" id="contact">
+  <div class="container">
+    <div class="mu-section-head reveal">
+      <div class="eyebrow">// Contacto</div>
+      <h2>Hablemos de tu <span class="accent">próximo proyecto</span></h2>
+      <p>¿Tienes una idea? Estoy disponible para nuevos retos.</p>
+    </div>
+
+    <div class="row g-5">
+      <div class="col-lg-5 reveal">
+        <div class="mu-contact-info">
+          <h3>Información de contacto</h3>
+          <p>Puedes escribirme directamente o usar el formulario. Respondo en menos de 24 horas.</p>
+          <div class="mu-contact-item">
+            <div class="ic"><i class="bi bi-envelope"></i></div>
+            <div><div class="k">Email</div><div class="v">crondonb890517@gmail.com</div></div>
+          </div>
+          <div class="mu-contact-item">
+            <div class="ic"><i class="bi bi-geo-alt"></i></div>
+            <div><div class="k">Ubicación</div><div class="v">Bayamo, Cuba</div></div>
+          </div>
+          <div class="mu-contact-item">
+            <div class="ic"><i class="bi bi-clock"></i></div>
+            <div><div class="k">Disponibilidad</div><div class="v">Lun - Vie, 9am - 6pm</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7 reveal">
+        <form class="mu-contact-form" @submit.prevent="submitForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-control" x-model="form.name" required/>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" x-model="form.email" required/>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Asunto</label>
+              <input type="text" class="form-control" x-model="form.subject" required/>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Mensaje</label>
+              <textarea class="form-control" rows="5" x-model="form.message" required></textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-mu-primary">Enviar mensaje <i class="bi bi-send"></i></button>
+            </div>
+            <div class="col-12" x-show="sent">
+              <div class="mu-form-msg">¡Mensaje enviado! Te responderé pronto.</div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="mu-footer">
+  <div class="container">
+    <div class="socials mb-3">
+      <a href="#" aria-label="GitHub"><i class="bi bi-github"></i></a>
+      <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+      <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+      <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+    </div>
+    <p>© <span x-text="new Date().getFullYear()"></span> César Rondón Batista. Hecho con <span class="heart">❤</span> y café.</p>
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- App JS -->
+<script src="js/app.js"></script>
+</body>
+</html>

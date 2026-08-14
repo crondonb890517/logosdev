@@ -1,0 +1,474 @@
+ 
+  :root{
+    /* Paleta oficial Ubuntu 26.04 Yaru (constante) */
+    --u-orange:#E95420;
+    --u-orange-hover:#F47750;
+    --u-orange-dark:#C7401A;
+    --u-aubergine:#772953;
+    --u-aubergine-deep:#2C001E;
+    --u-aubergine-dark:#1A0012;
+    --u-warm-grey:#AEA79F;
+    --u-white:#FFFFFF;
+    --bs-body-font-family:'Ubuntu',system-ui,sans-serif;
+
+    /* ===== VARIABLES SEMÁNTICAS · MODO CLARO (default) ===== */
+    --bg-body:#FFFFFF;
+    --bg-section:#F7F7F7;
+    --bg-card:#FFFFFF;
+    --text-heading:#111111;
+    --text-body:#333333;
+    --text-muted:#666666;
+    --border-subtle:#e5e5e5;
+    --bar-bg:#eeeeee;
+    --tag-bg:#F7F7F7;
+    --tag-text:#333333;
+    --icon-bg:rgba(233,84,32,.1);
+    --shadow-sm:0 1px 3px rgba(0,0,0,.08);
+    --shadow-md:0 8px 20px rgba(0,0,0,.1);
+    --tab-border:#dddddd;
+  }
+
+  /* ===== VARIABLES SEMÁNTICAS · MODO OSCURO (Yaru dark) ===== */
+  [data-bs-theme="dark"]{
+    --bg-body:#1B1B1B;
+    --bg-section:#242424;
+    --bg-card:#2E2E2E;
+    --text-heading:#F7F7F7;
+    --text-body:#E0E0E0;
+    --text-muted:#AEA79F;
+    --border-subtle:rgba(255,255,255,.09);
+    --bar-bg:rgba(255,255,255,.12);
+    --tag-bg:rgba(255,255,255,.07);
+    --tag-text:#E0E0E0;
+    --icon-bg:rgba(233,84,32,.18);
+    --shadow-sm:0 1px 3px rgba(0,0,0,.4);
+    --shadow-md:0 8px 20px rgba(0,0,0,.5);
+    --tab-border:rgba(255,255,255,.2);
+  }
+
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg-body);
+    color:var(--text-body);
+    line-height:1.6;
+    overflow-x:hidden;
+    transition:background-color .4s ease,color .4s ease;
+  }
+
+  /* Transición suave de tema en componentes */
+  .mu-about,.mu-experience,.mu-skill-card,.mu-proj-card,.mu-tl-card,
+  .mu-info-item,.mu-tab-btn,.mu-tech,.mu-skill-bar,.mu-skill-icon,
+  .mu-section-head h2,.mu-section-head p,.mu-about h3,.mu-about p,
+  .mu-info-item .v,.mu-info-item .k,.mu-tl-card h3,.mu-tl-card p,
+  .mu-proj-body h3,.mu-proj-body p,.mu-skill-name,.mu-skill-pct,.mu-tl-card .company{
+    transition:background-color .4s ease,color .4s ease,border-color .4s ease,box-shadow .4s ease;
+  }
+
+  /* NAVBAR YARU STYLE (siempre oscuro, como el panel de Ubuntu) */
+  .mu-navbar{
+    background:rgba(44,0,30,.96);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(233,84,32,.3);
+  }
+  .mu-logo-mark{
+    width:36px;height:36px;border-radius:50%;
+    background:var(--u-orange);
+    display:inline-grid;place-items:center;
+    color:var(--u-white);font-weight:700;font-size:1rem;
+    box-shadow:0 0 0 2px var(--u-white);
+    font-family:'Ubuntu Mono',monospace;
+  }
+  .mu-navbar .navbar-brand{color:var(--u-white) !important;font-family:'Ubuntu Mono',monospace}
+  .mu-navbar .nav-link{
+    color:rgba(255,255,255,.85) !important;
+    font-weight:400;position:relative;transition:color .2s;
+  }
+  .mu-navbar .nav-link::after{
+    content:'';position:absolute;left:50%;bottom:-4px;
+    width:0;height:2px;background:var(--u-orange);
+    transition:all .3s;transform:translateX(-50%);
+  }
+  .mu-navbar .nav-link:hover{color:var(--u-orange) !important}
+  .mu-navbar .nav-link:hover::after{width:80%}
+  .mu-navbar .navbar-toggler{border-color:rgba(233,84,32,.5)}
+  .mu-navbar .navbar-toggler-icon{
+    filter:invert(65%) sepia(75%) saturate(1000%) hue-rotate(355deg) brightness(95%);
+  }
+
+  /* BOTÓN TOGGLE DE TEMA */
+  .mu-theme-toggle{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    color:var(--u-white);
+    width:38px;height:38px;border-radius:4px;
+    display:inline-grid;place-items:center;
+    transition:all .25s;padding:0;flex-shrink:0;
+  }
+  .mu-theme-toggle:hover{
+    background:var(--u-orange);border-color:var(--u-orange);
+    color:var(--u-white);transform:translateY(-2px);
+  }
+  .mu-theme-toggle i{font-size:1rem;transition:transform .3s}
+  .mu-theme-toggle:active i{transform:rotate(180deg)}
+
+  /* BUTTONS UBUNTU */
+  .btn-mu-primary{
+    background:var(--u-orange);color:var(--u-white);
+    border:none;font-weight:500;padding:.7rem 1.5rem;
+    border-radius:4px;transition:all .2s;
+    box-shadow:0 1px 3px rgba(0,0,0,.15);
+  }
+  .btn-mu-primary:hover{
+    background:var(--u-orange-hover);color:var(--u-white);
+    transform:translateY(-2px);
+    box-shadow:0 4px 12px rgba(233,84,32,.4);
+  }
+  .btn-mu-outline{
+    background:transparent;color:var(--u-white);
+    border:1.5px solid rgba(255,255,255,.6);font-weight:500;
+    padding:.65rem 1.4rem;border-radius:4px;transition:all .2s;
+  }
+  .btn-mu-outline:hover{
+    background:rgba(255,255,255,.1);color:var(--u-white);
+    border-color:var(--u-white);transform:translateY(-2px);
+  }
+
+  /* HERO - WALLPAPER UBUNTU STYLE (siempre oscuro) */
+  .mu-hero{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at top right,rgba(233,84,32,.25),transparent 50%),
+      radial-gradient(ellipse at bottom left,rgba(119,41,83,.4),transparent 60%),
+      linear-gradient(135deg,#1A0012 0%,var(--u-aubergine-deep) 40%,var(--u-aubergine) 100%);
+    color:var(--u-white);
+    position:relative;overflow:hidden;
+    padding-top:76px;display:flex;align-items:center;
+  }
+  .mu-hero::before{
+    content:'';position:absolute;inset:0;
+    background-image:
+      radial-gradient(circle at 20% 50%,rgba(233,84,32,.2),transparent 50%),
+      radial-gradient(circle at 80% 20%,rgba(244,119,80,.12),transparent 40%);
+    pointer-events:none;
+  }
+  .mu-hero .container{position:relative;z-index:1}
+  .mu-hero-tag{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:rgba(233,84,32,.15);border:1px solid var(--u-orange);
+    padding:.35rem .9rem;border-radius:20px;
+    font-size:.8rem;font-weight:500;color:var(--u-orange-hover);
+    font-family:'Ubuntu Mono',monospace;
+  }
+  .mu-hero-tag .dot{width:8px;height:8px;border-radius:50%;background:var(--u-orange);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .mu-hero h1{
+    font-size:clamp(2.2rem,5vw,4rem);
+    font-weight:300;line-height:1.1;letter-spacing:-.5px;
+  }
+  .mu-hero h1 .accent{color:var(--u-orange);font-weight:500}
+  .mu-hero h1 .gold{color:var(--u-orange-hover);font-weight:500}
+  .mu-hero .lead{font-size:1.1rem;opacity:.85;max-width:540px;font-weight:300}
+  .mu-stat .num{font-size:2rem;font-weight:500;color:var(--u-orange);font-family:'Ubuntu Mono',monospace}
+  .mu-stat .lbl{font-size:.8rem;opacity:.65;font-weight:300}
+  .mu-hero-img-wrap{position:relative;display:grid;place-items:center}
+  .mu-hero-img-wrap::before{
+    content:'';position:absolute;
+    width:380px;height:380px;border-radius:50%;
+    background:radial-gradient(circle,var(--u-orange) 0%,transparent 70%);
+    opacity:.25;filter:blur(50px);
+  }
+  .mu-hero-img{
+    width:340px;height:340px;border-radius:50%;
+    object-fit:cover;border:3px solid var(--u-orange);
+    box-shadow:0 0 0 6px rgba(233,84,32,.15),0 20px 60px rgba(0,0,0,.5);
+    position:relative;z-index:1;max-width:100%;
+  }
+  .mu-floating-badge{
+    position:absolute;z-index:2;
+    background:rgba(44,0,30,.9);border:1px solid var(--u-orange);
+    padding:.5rem .9rem;border-radius:6px;
+    font-size:.8rem;font-weight:500;color:var(--u-white);
+    backdrop-filter:blur(10px);font-family:'Ubuntu Mono',monospace;
+  }
+  .mu-fb-1{top:10%;left:-10px;animation:float 4s ease-in-out infinite}
+  .mu-fb-2{bottom:15%;right:-20px;animation:float 4s ease-in-out infinite .5s}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  @media(max-width:768px){
+    .mu-hero-img{width:260px;height:260px}
+    .mu-hero-img-wrap::before{width:280px;height:280px}
+  }
+
+  /* SECTIONS */
+  section{padding:6rem 0}
+  .mu-section-head{text-align:center;margin-bottom:4rem}
+  .mu-section-head .eyebrow{
+    color:var(--u-orange);font-weight:500;font-size:.85rem;
+    letter-spacing:3px;text-transform:uppercase;
+    margin-bottom:.6rem;font-family:'Ubuntu Mono',monospace;
+  }
+  .mu-section-head h2{
+    font-size:clamp(1.8rem,4vw,2.8rem);
+    font-weight:300;color:var(--text-heading);letter-spacing:-.5px;
+  }
+  .mu-section-head h2 .accent{color:var(--u-orange);font-weight:500}
+  .mu-section-head p{max-width:600px;margin:1rem auto 0;color:var(--text-muted);font-weight:300}
+
+  /* ABOUT */
+  .mu-about{background:var(--bg-section)}
+  .mu-about h3{font-size:1.5rem;margin-bottom:1rem;font-weight:400;color:var(--text-heading)}
+  .mu-about p{color:var(--text-body);font-weight:300}
+  .mu-info-item{
+    background:var(--bg-card);padding:1rem 1.2rem;border-radius:4px;
+    border-left:3px solid var(--u-orange);height:100%;
+    box-shadow:var(--shadow-sm);border:1px solid var(--border-subtle);
+  }
+  .mu-info-item:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .mu-info-item .k{
+    font-size:.7rem;color:var(--u-orange);font-weight:500;
+    text-transform:uppercase;letter-spacing:1.5px;
+    font-family:'Ubuntu Mono',monospace;
+  }
+  .mu-info-item .v{font-weight:500;margin-top:.3rem;color:var(--text-heading)}
+  .mu-about-card{
+    background:linear-gradient(135deg,var(--u-aubergine-deep) 0%,var(--u-aubergine) 100%);
+    color:var(--u-white);padding:2.5rem;border-radius:8px;
+    position:relative;overflow:hidden;height:100%;
+    box-shadow:0 10px 30px rgba(44,0,30,.3);
+  }
+  .mu-about-card::before{
+    content:'';position:absolute;top:-50%;right:-50%;
+    width:200%;height:200%;
+    background:radial-gradient(circle,rgba(233,84,32,.18),transparent 50%);
+  }
+  .mu-about-card h4{font-size:1.25rem;margin-bottom:1.5rem;position:relative;font-weight:400}
+  .mu-about-card h4::before{
+    content:'';display:inline-block;width:30px;height:2px;
+    background:var(--u-orange);margin-right:.6rem;vertical-align:middle;
+  }
+  .mu-about-list{list-style:none;padding:0;position:relative}
+  .mu-about-list li{
+    padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex;align-items:center;gap:.8rem;font-weight:300;
+  }
+  .mu-about-list li::before{content:'→';color:var(--u-orange);font-weight:500}
+  .mu-about-list li:last-child{border:none}
+
+  /* SKILLS */
+  .mu-tab-btn{
+    padding:.55rem 1.3rem;border-radius:4px;
+    background:transparent;border:1px solid var(--tab-border);
+    font-weight:400;cursor:pointer;transition:all .2s;
+    font-size:.88rem;color:var(--text-body);
+  }
+  .mu-tab-btn:hover{border-color:var(--u-orange);color:var(--u-orange)}
+  .mu-tab-btn.active{
+    background:var(--u-orange);border-color:var(--u-orange);color:var(--u-white);
+    box-shadow:0 2px 8px rgba(233,84,32,.3);
+  }
+  .mu-skill-card{
+    background:var(--bg-card);padding:1.5rem;border-radius:4px;
+    box-shadow:var(--shadow-sm);border:1px solid var(--border-subtle);
+    transition:all .25s;height:100%;
+  }
+  .mu-skill-card:hover{
+    transform:translateY(-4px);box-shadow:var(--shadow-md);
+    border-color:var(--u-orange);
+  }
+  .mu-skill-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem}
+  .mu-skill-name{font-weight:500;display:flex;align-items:center;gap:.6rem;color:var(--text-heading)}
+  .mu-skill-icon{
+    width:36px;height:36px;border-radius:4px;
+    background:var(--icon-bg);color:var(--u-orange);
+    display:grid;place-items:center;font-size:1.1rem;flex-shrink:0;
+  }
+  .mu-skill-pct{color:var(--u-orange);font-weight:500;font-size:.9rem;font-family:'Ubuntu Mono',monospace}
+  .mu-skill-bar{height:6px;background:var(--bar-bg);border-radius:3px;overflow:hidden}
+  .mu-skill-fill{
+    height:100%;background:linear-gradient(90deg,var(--u-orange),var(--u-orange-hover));
+    border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* EXPERIENCE */
+  .mu-experience{background:var(--bg-section)}
+  .mu-timeline{position:relative;max-width:800px;margin:0 auto;padding-left:60px}
+  .mu-timeline::before{
+    content:'';position:absolute;left:20px;top:0;bottom:0;
+    width:2px;background:linear-gradient(var(--u-orange),var(--u-aubergine));
+    border-radius:2px;
+  }
+  .mu-tl-item{position:relative;margin-bottom:2.5rem}
+  .mu-tl-dot{
+    position:absolute;left:-52px;top:8px;
+    width:24px;height:24px;border-radius:50%;
+    background:var(--bg-card);border:3px solid var(--u-orange);
+    box-shadow:0 0 0 4px rgba(233,84,32,.15);
+  }
+  .mu-tl-card{
+    background:var(--bg-card);padding:1.5rem;border-radius:4px;
+    box-shadow:var(--shadow-sm);border-top:3px solid var(--u-orange);
+    border-left:1px solid var(--border-subtle);
+    border-right:1px solid var(--border-subtle);
+    border-bottom:1px solid var(--border-subtle);
+    transition:all .2s;
+  }
+  .mu-tl-card:hover{box-shadow:var(--shadow-md);transform:translateX(4px)}
+  .mu-tl-date{
+    display:inline-block;background:var(--u-orange);color:var(--u-white);
+    padding:.2rem .7rem;border-radius:3px;
+    font-size:.7rem;font-weight:500;margin-bottom:.6rem;
+    font-family:'Ubuntu Mono',monospace;letter-spacing:.5px;
+  }
+  .mu-tl-card h3{font-size:1.1rem;font-weight:500;margin-bottom:.3rem;color:var(--text-heading)}
+  .mu-tl-card .company{color:var(--u-orange);font-weight:500;font-size:.88rem;margin-bottom:.8rem}
+  [data-bs-theme="dark"] .mu-tl-card .company{color:var(--u-orange-hover)}
+  .mu-tl-card p{color:var(--text-body);font-size:.9rem;font-weight:300;margin-bottom:0}
+  @media(max-width:600px){
+    .mu-timeline{padding-left:45px}
+    .mu-timeline::before{left:15px}
+    .mu-tl-dot{left:-42px;width:20px;height:20px}
+  }
+
+  /* PROJECTS */
+  .mu-proj-card{
+    background:var(--bg-card);border-radius:4px;overflow:hidden;
+    box-shadow:var(--shadow-sm);transition:all .25s;
+    border:1px solid var(--border-subtle);height:100%;
+    display:flex;flex-direction:column;
+  }
+  .mu-proj-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 12px 28px rgba(233,84,32,.15);
+    border-color:var(--u-orange);
+  }
+  .mu-proj-img{
+    height:160px;
+    background:linear-gradient(135deg,var(--u-aubergine-deep) 0%,var(--u-aubergine) 60%,var(--u-orange-dark) 100%);
+    display:grid;place-items:center;color:var(--u-white);
+    font-size:2.8rem;font-weight:500;position:relative;overflow:hidden;
+  }
+  .mu-proj-img::after{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 30%,rgba(233,84,32,.2),transparent 50%);
+  }
+  .mu-proj-body{padding:1.5rem;flex-grow:1;display:flex;flex-direction:column}
+  .mu-proj-tag{
+    display:inline-block;background:var(--icon-bg);color:var(--u-orange);
+    padding:.15rem .6rem;border-radius:3px;font-size:.7rem;
+    font-weight:500;margin-bottom:.8rem;width:fit-content;
+    font-family:'Ubuntu Mono',monospace;letter-spacing:.5px;
+  }
+  [data-bs-theme="dark"] .mu-proj-tag{color:var(--u-orange-hover)}
+  .mu-proj-body h3{font-size:1.1rem;font-weight:500;margin-bottom:.5rem;color:var(--text-heading)}
+  .mu-proj-body p{font-size:.88rem;color:var(--text-muted);font-weight:300;margin-bottom:1rem}
+  .mu-proj-techs{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:1rem}
+  .mu-tech{
+    background:var(--tag-bg);padding:.2rem .55rem;border-radius:3px;
+    font-size:.72rem;font-weight:500;color:var(--tag-text);
+    border:1px solid var(--border-subtle);
+  }
+  .mu-proj-links a{
+    font-size:.82rem;font-weight:500;color:var(--u-orange);
+    display:inline-flex;align-items:center;gap:.3rem;
+    text-decoration:none;transition:gap .2s;
+  }
+  [data-bs-theme="dark"] .mu-proj-links a{color:var(--u-orange-hover)}
+  .mu-proj-links a:hover{gap:.6rem;color:var(--u-orange-dark)}
+  [data-bs-theme="dark"] .mu-proj-links a:hover{color:var(--u-orange)}
+
+  /* CONTACT (siempre oscuro) */
+  .mu-contact{
+    background:
+      radial-gradient(ellipse at top right,rgba(233,84,32,.15),transparent 50%),
+      linear-gradient(135deg,var(--u-aubergine-dark) 0%,var(--u-aubergine-deep) 100%);
+    color:var(--u-white);
+  }
+  .mu-contact .mu-section-head h2{color:var(--u-white)}
+  .mu-contact .mu-section-head .eyebrow{color:var(--u-orange)}
+  .mu-contact .mu-section-head p{color:rgba(255,255,255,.7)}
+  .mu-contact-info h3{font-size:1.35rem;margin-bottom:1rem;font-weight:400}
+  .mu-contact-info p{opacity:.85;margin-bottom:2rem;font-weight:300}
+  .mu-contact-item{
+    display:flex;align-items:center;gap:1rem;
+    padding:.9rem;background:rgba(255,255,255,.04);
+    border-radius:4px;margin-bottom:.7rem;
+    border-left:3px solid var(--u-orange);
+    border:1px solid rgba(233,84,32,.2);
+    transition:all .2s;
+  }
+  .mu-contact-item:hover{background:rgba(233,84,32,.08);transform:translateX(3px)}
+  .mu-contact-item .ic{
+    width:38px;height:38px;border-radius:4px;
+    background:var(--u-orange);display:grid;place-items:center;
+    font-size:1rem;flex-shrink:0;color:var(--u-white);
+  }
+  .mu-contact-item .k{
+    font-size:.7rem;opacity:.6;text-transform:uppercase;letter-spacing:1.5px;
+    font-family:'Ubuntu Mono',monospace;
+  }
+  .mu-contact-item .v{font-weight:500}
+  .mu-contact-form{
+    background:rgba(255,255,255,.04);padding:2rem;border-radius:4px;
+    border:1px solid rgba(233,84,32,.25);backdrop-filter:blur(10px);
+  }
+  .mu-contact-form .form-label{
+    display:block;font-size:.8rem;font-weight:500;
+    margin-bottom:.4rem;color:rgba(255,255,255,.9);
+    font-family:'Ubuntu Mono',monospace;text-transform:uppercase;letter-spacing:.5px;
+  }
+  .mu-contact-form .form-control{
+    width:100%;padding:.7rem 1rem;border-radius:4px;
+    background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);
+    color:var(--u-white);font-family:inherit;font-size:.95rem;font-weight:300;
+    transition:border-color .2s;
+  }
+  .mu-contact-form .form-control::placeholder{color:rgba(255,255,255,.4)}
+  .mu-contact-form .form-control:focus{
+    background:rgba(0,0,0,.4);color:var(--u-white);
+    border-color:var(--u-orange);
+    box-shadow:0 0 0 .2rem rgba(233,84,32,.25);
+  }
+  .mu-contact-form textarea{resize:vertical;min-height:120px}
+  .mu-form-msg{
+    padding:.8rem 1rem;border-radius:4px;margin-top:1rem;
+    font-size:.88rem;font-weight:500;
+    background:rgba(233,84,32,.15);color:var(--u-orange-hover);
+    border:1px solid var(--u-orange);
+  }
+
+  /* FOOTER (siempre oscuro) */
+  .mu-footer{
+    background:var(--u-aubergine-dark);color:var(--u-white);
+    padding:2rem 0;text-align:center;
+    border-top:2px solid var(--u-orange);
+  }
+  .mu-footer .socials a{
+    width:38px;height:38px;border-radius:4px;
+    background:rgba(255,255,255,.06);
+    display:inline-grid;place-items:center;
+    transition:all .2s;color:var(--u-white);
+    text-decoration:none;border:1px solid rgba(255,255,255,.08);
+  }
+  .mu-footer .socials a:hover{
+    background:var(--u-orange);transform:translateY(-3px);
+    border-color:var(--u-orange);
+  }
+  .mu-footer p{opacity:.6;font-size:.82rem;margin-bottom:0;font-weight:300}
+  .mu-footer .heart{color:var(--u-orange)}
+
+  /* Reveal animation */
+  .reveal{opacity:0;transform:translateY(30px);transition:all .8s}
+  .reveal.visible{opacity:1;transform:none}
+
+  /* Responsive navbar */
+  @media(max-width:991px){
+    .mu-navbar .navbar-collapse{
+      background:var(--u-aubergine-deep);
+      padding:1rem;
+      border-top:1px solid rgba(233,84,32,.2);
+      margin-top:.5rem;border-radius:4px;
+    }
+    .mu-navbar .nav-link{padding:.65rem 0 !important;border-bottom:1px solid rgba(255,255,255,.05)}
+    .mu-navbar .nav-link:last-child{border:none}
+    .mu-navbar .nav-link::after{display:none}
+  }
+
