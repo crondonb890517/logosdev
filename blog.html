@@ -464,22 +464,20 @@
         <article class="mu-post-content">
           <p class="lead" style="color: var(--text-muted);" x-text="currentPost?.excerpt"></p>
           
-          <div style="margin-top: 2rem;">
-            <p>Aquí iría el contenido completo del artículo. Este es un ejemplo de cómo se vería la página individual de un post del blog.</p>
-            
-            <h2>Introducción</h2>
-            <p>En este artículo exploraremos los conceptos fundamentales relacionados con <strong x-text="currentPost?.title"></strong>. Este tema es esencial para cualquier desarrollador que quiera mejorar sus habilidades.</p>
-            
-            <h2>Puntos clave</h2>
-            <p>Analizaremos las mejores prácticas, los errores comunes y cómo evitarlos. También veremos ejemplos prácticos que podrás aplicar en tus propios proyectos.</p>
-            
-            <blockquote style="border-left: 4px solid var(--u-orange); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--text-muted);">
-              "El código limpio no es solo sobre que funcione, es sobre que sea fácil de mantener y entender."
-            </blockquote>
-            
-            <h2>Conclusión</h2>
-            <p>Espero que este artículo te haya sido útil. Si tienes alguna pregunta o comentario, no dudes en contactarme.</p>
+          <!-- Información del autor y tiempo de lectura -->
+          <div style="display: flex; gap: 2rem; margin: 2rem 0; padding: 1.5rem; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted);">
+              <i class="bi bi-clock"></i>
+              <span style="font-family: 'Ubuntu Mono', monospace; font-size: 0.9rem;" x-text="currentPost?.readTime || '5 min'"></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted);">
+              <i class="bi bi-person-circle"></i>
+              <span style="font-family: 'Ubuntu Mono', monospace; font-size: 0.9rem;" x-text="currentPost?.author || 'César Rondón'"></span>
+            </div>
           </div>
+          
+          <!-- Contenido HTML del post -->
+          <div x-html="currentPost?.content"></div>
 
           <!-- Tags del post -->
           <div class="mu-post-tags">
