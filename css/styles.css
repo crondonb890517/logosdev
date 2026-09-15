@@ -523,3 +523,85 @@
     .mu-navbar .nav-link::after{display:none}
   }
 
+  /* Blog Post Content Styles */
+  .mu-post-content h2 {
+    color: var(--text-heading);
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+    font-size: 1.75rem;
+    font-weight: 500;
+  }
+
+  .mu-post-content h3 {
+    color: var(--text-heading);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  .mu-post-content p {
+    margin-bottom: 1.5rem;
+    color: var(--text-body);
+    line-height: 1.8;
+  }
+
+  .mu-post-content ul,
+  .mu-post-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+  }
+
+  .mu-post-content li {
+    margin-bottom: 0.75rem;
+    color: var(--text-body);
+    line-height: 1.7;
+  }
+
+  .mu-post-content pre {
+    background: var(--bg-section);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .mu-post-content code {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+  }
+
+  .mu-post-content p code {
+    background: var(--tag-bg);
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    color: var(--u-orange);
+  }
+
+  .mu-post-content blockquote {
+    border-left: 4px solid var(--u-orange);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    padding: 1.25rem 1.5rem;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .mu-post-content strong {
+    color: var(--text-heading);
+    font-weight: 500;
+  }
+
+  .mu-post-content .lead {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
